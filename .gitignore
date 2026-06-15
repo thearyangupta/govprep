@@ -1,4 +1,7 @@
 
+# Keep data folder tracked, but ignore PDF content files
+/data/*.pdf
+
 # Ignore VS Code workspace settings
 /.vscode/
 /db/
