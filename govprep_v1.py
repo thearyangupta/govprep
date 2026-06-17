@@ -1,5 +1,3 @@
-# Save as: govprep/govprep_v1.py
-
 import os, sys
 from dotenv import load_dotenv
 
