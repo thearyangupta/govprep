@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from pypdf import PdfReader
 
 def load_pdf_with_pages(filepath):
@@ -19,11 +20,12 @@ def chunk_text(text, chunk_size=500, overlap=50):
         start += chunk_size - overlap
     return chunks
 
-# Map each file to a clean source name
+# Map each source to the actual data subfolder containing PDFs
+BASE_DIR = Path(__file__).resolve().parent.parent / "data"
 DOCUMENTS = {
-    "polity": "../data/ncert_polity_ch01.pdf",
-    "history": "../data/ncert_history_ch01.pdf",
-    "geography": "../data/ncert_geography_ch01.pdf",
+    "polity": BASE_DIR / "polity",
+    "history": BASE_DIR / "history",
+    "geography": BASE_DIR / "geography",
 }
 
 import chromadb
@@ -39,13 +41,14 @@ collection = client.get_or_create_collection(
 
 if collection.count() == 0:
     ids, docs, metas = [], [], []
-    for source, path in DOCUMENTS.items():
-        for page_num, page_text in load_pdf_with_pages(path):
-            for ci, chunk in enumerate(chunk_text(page_text)):
-                ids.append(f"{source}_p{page_num}_c{ci}")
-                docs.append(chunk)
-                metas.append({"source": source, "page": page_num})
-    print(f"Adding {len(docs)} chunks from {len(DOCUMENTS)} docs...")
+    for source, folder in DOCUMENTS.items():
+        for pdf_path in sorted(folder.glob("*.pdf")):
+            for page_num, page_text in load_pdf_with_pages(pdf_path):
+                for ci, chunk in enumerate(chunk_text(page_text)):
+                    ids.append(f"{source}_{pdf_path.stem}_p{page_num}_c{ci}")
+                    docs.append(chunk)
+                    metas.append({"source": source, "page": page_num, "file": pdf_path.name})
+    print(f"Adding {len(docs)} chunks from {len(DOCUMENTS)} sources...")
     collection.add(ids=ids, documents=docs, metadatas=metas)
     print(f"Stored {collection.count()} chunks")
 else:
