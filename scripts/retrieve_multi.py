@@ -1,15 +1,15 @@
 import chromadb
 from chromadb.utils import embedding_functions
 
-def get_collection():
+def get_collection(collection_name="govprep_multi"):
  client = chromadb.PersistentClient(path="../db")
  ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
- return client.get_or_create_collection(name="govprep_multi", embedding_function=ef)
+ return client.get_or_create_collection(name=collection_name, embedding_function=ef)
 
 
-def retrieve(query, k=4, source=None):
+def retrieve(query, k=4, source=None, collection_name="govprep_multi"):
  """Retrieve top-k chunks. Optionally filter to one source."""
- collection = get_collection()
+ collection = get_collection(collection_name=collection_name)
  where = {"source": source} if source else None
  results = collection.query(
     query_texts=[query], n_results=k, where=where
