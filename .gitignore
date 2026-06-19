@@ -6,3 +6,10 @@
 /.vscode/
 /db/
 .env
+# Ignore data PDFs stored in subfolders
+/data/**/*.pdf
+# Ignore Python cache files
+__pycache__/
+**/__pycache__/
+# Ignore local practice script
+scripts/practice.py
