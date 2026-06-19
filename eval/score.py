@@ -7,9 +7,9 @@ def load_gold():
  with open(Path(__file__).resolve().parent / "gold_set.json") as f:
   return json.load(f)
 
-def hit_and_rank(gold_item, k=3):
+def hit_and_rank(gold_item, k=3, collection_name="govprep_multi"):
  """Returns (hit:bool, rank:int or None) for one question."""
- chunks = retrieve(gold_item["question"], k=k)
+ chunks = retrieve(gold_item["question"], k=k, collection_name=collection_name)
  keyword = gold_item["required_keyword"].lower()
 
  for rank, c in enumerate(chunks, start=1):
@@ -17,12 +17,12 @@ def hit_and_rank(gold_item, k=3):
    return True, rank
  return False, None
 
-def evaluate(k=3):
+def evaluate(k=3, collection_name="govprep_multi"):
  gold = load_gold()
  hits, reciprocal_ranks = 0, []
 
  for item in gold:
-  hit, rank = hit_and_rank(item, k=k)
+  hit, rank = hit_and_rank(item, k=k, collection_name=collection_name)
 
   if hit:
    hits += 1
