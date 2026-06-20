@@ -44,4 +44,6 @@ def evaluate(k=3):
  return {"hit_rate": hit_rate, "mrr": mrr, "k": k}
 
 if __name__ == "__main__":
- evaluate(k=3)
+ for k in [1, 3, 5, 8]:
+  print(f"\n--- k = {k} ---")
+  evaluate(k=k)
