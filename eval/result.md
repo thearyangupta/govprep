@@ -24,6 +24,10 @@ Recursive chunking beat fixed: +0.067 hit rate, +0.056 MRR.
 Bigger chunks win on this corpus. NCERT paragraphs are long, so larger
 chunks keep complete ideas together. Winner: recursive 1000/100.
 
+# Best config so far
+recursive chunking, chunk_size=1000, overlap=100
+Hit Rate@3 = 0.733, MRR = 0.656 (up from 0.533 / 0.433 baseline)
+
 # top-k sweep (recursive 1000/100)
 | k | Hit Rate | MRR   |
 |---|----------|-------|
@@ -32,3 +36,13 @@ chunks keep complete ideas together. Winner: recursive 1000/100.
 | 5 | 0.733    | 0.656 |
 | 8 | 0.733    | 0.656 |
 Best k = 3 (plateaus after). Misses are unretrieved chunks, not ranking — a retrieval-quality issue, not a k issue.
+
+## govprep_v1 vs govprep_v2 (before/after) 
+
+| Version                    | Hit Rate@3 | MRR   |
+|----------------------------|------------|-------|
+| v1 (fixed 500, baseline)   | 0.533      | 0.433 |
+| v2 (recursive 1000/100,k=3)| 0.733      | 0.656 |
+| Improvement                | +37%       | +52%  |
+
+Final config: recursive chunking, 1000/100, k=3.
