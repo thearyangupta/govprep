@@ -1,8 +1,10 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 
-load_dotenv("../.env")
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(env_path)
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 REWRITE_PROMPT = """Given the conversation history and a follow-up \
