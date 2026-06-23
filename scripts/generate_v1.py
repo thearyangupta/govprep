@@ -1,10 +1,13 @@
 # Save as: govprep/scripts/generate_v1.py
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 from retrieve_multi import retrieve
 from rewrite import rewrite_query
-load_dotenv("../.env")
+
+env_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(env_path)
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 SYSTEM = """You are a UPSC/CDS exam prep assistant answering from \
 NCERT textbooks. Rules:
