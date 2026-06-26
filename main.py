@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 import sys
 from pathlib import Path
+from pydantic import BaseModel
+from typing import List
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
 
@@ -9,22 +11,33 @@ from generate_v1 import answer
 
 app = FastAPI(title="govprep API")
 
-# one shared memory for now
 memory = ConversationMemory()
 
 
-@app.post("/chat")
-async def chat(request: Request):
-    data = await request.json()
-    question = data["question"]
+class ChatRequest(BaseModel):
+    question: str
 
-    result = answer(question, memory)
 
-    return {
-        "answer": result["answer"],
-        "rewritten": result["rewritten"],
-        "sources": [
-            {"source": c["source"], "page": c["page"]}
+class Source(BaseModel):
+    source: str
+    page: int
+
+
+class ChatResponse(BaseModel):
+    answer: str
+    rewritten: str
+    sources: List[Source]
+
+
+@app.post("/chat", response_model=ChatResponse)
+def chat(req: ChatRequest):  #FastAPI automatically reads the JSON and converts it into ChatRequest.
+    result = answer(req.question, memory)
+
+    return ChatResponse(
+        answer=result["answer"],
+        rewritten=result["rewritten"],
+        sources=[
+            Source(source=c["source"], page=c["page"])
             for c in result["chunks"]
         ],
-    }
+    )
