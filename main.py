@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import sys
 from pathlib import Path
 from pydantic import BaseModel
 from typing import List
+from fastapi.middleware.cors import CORSMiddleware
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
 
@@ -10,6 +11,13 @@ from memory import ConversationMemory
 from generate_v1 import answer
 
 app = FastAPI(title="govprep API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 memory = ConversationMemory()
 
@@ -30,8 +38,22 @@ class ChatResponse(BaseModel):
 
 
 @app.post("/chat", response_model=ChatResponse)
-def chat(req: ChatRequest):  #FastAPI automatically reads the JSON and converts it into ChatRequest.
-    result = answer(req.question, memory)
+def chat(req: ChatRequest):
+
+    if not req.question.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Question is empty"
+        )
+
+    try:
+        result = answer(req.question, memory)
+
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="The model is busy. Please try again."
+        )
 
     return ChatResponse(
         answer=result["answer"],
