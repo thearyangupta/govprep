@@ -1,10 +1,12 @@
 import chromadb
 from chromadb.utils import embedding_functions
+from pathlib import Path
 
 def get_collection(collection_name="govprep_multi"):
- client = chromadb.PersistentClient(path="../db")
- ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
- return client.get_or_create_collection(name=collection_name, embedding_function=ef)
+   DB_PATH = Path(__file__).resolve().parent.parent / "db"
+   client = chromadb.PersistentClient(path=str(DB_PATH))
+   ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+   return client.get_or_create_collection(name=collection_name, embedding_function=ef)
 
 
 def retrieve(query, k=4, source=None, collection_name="govprep_multi"):
