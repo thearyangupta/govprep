@@ -9,7 +9,7 @@ Built from scratch in native Python (no heavy frameworks in the core) to
 understand each part of a retrieval-augmented generation (RAG) system, then
 measured and tuned with a real evaluation loop rather than guesswork.
 
-![govprep web UI](govprep-ai-ss.png)
+![govprep web UI](govprep-ai-ss-2.png)
 
 ## What it does
 
