@@ -2,33 +2,50 @@ from google import genai
 from llm import client
 
 
-def get_weather(city: str) -> str:
-    """Fake weather function."""
-    return f"The weather in {city} is 28C and sunny."
+def search_corpus(query: str) -> str:
+    """Search NCERT books for relevant passages."""
+    from retrieve_multi import retrieve
+
+    chunks = retrieve(query, k=3, collection_name="govprep_v2")
+
+    return "\n".join(
+        f"[{c['source']} p{c['page']}] {c['text']}"
+        for c in chunks
+    )
 
 
-weather_function = {
-    "name": "get_weather",
-    "description": "Get the weather for a city.",
+search_function = {
+    "name": "search_corpus",
+    "description": "Search NCERT books for relevant passages.",
     "parameters": {
         "type": "object",
         "properties": {
-            "city": {
+            "query": {
                 "type": "string",
-                "description": "The city name, for example Delhi",
+                "description": "The question or topic to search in the NCERT corpus.",
             }
         },
-        "required": ["city"],
+        "required": ["query"],
     },
 }
 
 
 response = client.models.generate_content(
     model="gemini-2.5-flash",
-    contents="What's the weather in Delhi?",
+    contents="What are fundamental rights?",
     config={
-        "tools": [{"function_declarations": [weather_function]}],
+        "tools": [{"function_declarations": [search_function]}],
     },
 )
 
 print(response)
+
+function_call = response.candidates[0].content.parts[0].function_call
+
+print("Function name:", function_call.name)
+print("Arguments:", function_call.args)
+
+tool_result = search_corpus(**function_call.args)
+
+print("\nTool result:")
+print(tool_result)
