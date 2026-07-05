@@ -80,23 +80,9 @@ The latest version of GovPrep uses a LangGraph-based ReAct agent to orchestrate 
 
 ## Agent WorkFlow
 
-User Question
-      │
-      ▼
-LangGraph ReAct Agent
-      │
-      ▼
-Gemini reasons
-      │
-      ├── Needs retrieval? ──► search_corpus()
-      │
-      ├── Needs calculation? ─► calculate()
-      │
-      ▼
-Tool results
-      │
-      ▼
-Gemini generates the final grounded answer
+```text
+User → Agent → Tool (if needed) → Agent → Final Answer
+```
 
 ## API
 
