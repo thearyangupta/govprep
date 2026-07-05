@@ -69,18 +69,17 @@ question + history
    -> save the turn to memory
 ```
 
-## LangGraph Agent
+## Langraph Agent
 
-The latest version of GovPrep uses a LangGraph-based ReAct agent to orchestrate tool usage. Instead of following a fixed retrieval pipeline, the agent decides when to retrieve information from the NCERT corpus, when to perform calculations, and when it already has enough information to answer directly.
+The latest version of GovPrep uses a LangGraph-based ReAct agent to orchestrate tool usage. Instead of following a fixed retrieval pipeline, the agent decides when to retrieve information from the NCERT corpus, when to perform calculations, and when it already has enough information to answer directly
 
-### Available tools
+## Available Tools
 
 - `search_corpus()` — retrieves relevant NCERT passages with source attribution.
 - `calculate()` — evaluates simple mathematical expressions.
 
-### Agent workflow
+## Agent WorkFlow
 
-```text
 User Question
       │
       ▼
