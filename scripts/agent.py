@@ -14,16 +14,17 @@ def search_corpus(query: str) -> str:
     retrieving information from the study material.
     """
     from retrieve_multi import retrieve
+    try:
+        chunks = retrieve(query, k=3)
+        if not chunks:
+            return "No relevant passages found."
 
-    chunks = retrieve(query, k=3)
-
-    if not chunks:
-        return "No relevant passages found."
-
-    return "\n".join(
-        f"[{c['source']} p{c['page']}] {c['text']}"
-        for c in chunks
+        return "\n".join(
+            f"[{c['source']} p{c['page']}] {c['text']}"
+            for c in chunks
     )
+    except Exception as e:
+        return f"Error Occured {e} try a diff approach"
 
 
 @tool
@@ -34,8 +35,8 @@ def calculate(expression: str) -> str:
     """
     try:
         return str(eval(expression))
-    except Exception:
-        return "could not calculate"
+    except Exception as e:
+        return f"Tool error{e},try a diff approach"
 
 
 model = ChatGoogleGenerativeAI(
