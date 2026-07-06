@@ -49,7 +49,11 @@ response = agent.invoke(
                 "Compare fundamental rights and directive principles.",
             )
         ]
+    },
+    config={
+        "recursion_limit":5
     }
 )
 
-print(response["messages"][-1].content)
+for message in response["messages"]:
+    print(message)
