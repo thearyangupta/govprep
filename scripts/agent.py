@@ -8,7 +8,11 @@ load_dotenv()
 
 @tool
 def search_corpus(query: str) -> str:
-    """Search GovPrep NCERT corpus for relevant passages."""
+    """
+    Search the GovPrep NCERT corpus for information related to UPSC/CDS.
+    Use this tool whenever the user asks factual questions that require
+    retrieving information from the study material.
+    """
     from retrieve_multi import retrieve
 
     chunks = retrieve(query, k=3)
@@ -24,7 +28,10 @@ def search_corpus(query: str) -> str:
 
 @tool
 def calculate(expression: str) -> str:
-    """Evaluate a simple math expression."""
+    """
+    Evaluate mathematical expressions.
+    Use this tool whenever the user asks arithmetic or numerical questions.
+    """
     try:
         return str(eval(expression))
     except Exception:
@@ -46,14 +53,19 @@ response = agent.invoke(
         "messages": [
             (
                 "user",
-                "Compare fundamental rights and directive principles.",
+                "Who won the FIFA World Cup 2022?"
             )
         ]
     },
     config={
-        "recursion_limit":5
+        "recursion_limit": 5
     }
 )
 
+print("=" * 60)
+print("REASONING TRACE")
+print("=" * 60)
+
 for message in response["messages"]:
-    print(message)
+    print(f"\n[{message.type.upper()}]")
+    print(message.content)
