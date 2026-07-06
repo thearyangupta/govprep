@@ -3,6 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.prebuilt import create_react_agent
 import os
 from dotenv import load_dotenv
+load_dotenv()
 
 
 @tool
@@ -30,29 +31,25 @@ def calculate(expression: str) -> str:
         return "could not calculate"
 
 
-tools = [search_corpus, calculate]
-
-load_dotenv()
-
-llm = ChatGoogleGenerativeAI(
+model = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
+    temperature=0,
     google_api_key=os.getenv("GEMINI_API_KEY"),
 )
 
-agent = create_react_agent(
-    model=llm,
-    tools=tools
+tools = [search_corpus, calculate]
+
+agent = create_react_agent(model, tools)
+
+response = agent.invoke(
+    {
+        "messages": [
+            (
+                "user",
+                "Compare fundamental rights and directive principles.",
+            )
+        ]
+    }
 )
 
-
-if __name__ == "__main__":
-    result = agent.invoke(
-        {
-            "messages": [
-                ("user", "What are Fundamental Rights? Also calculate 25 * 17.")
-            ]
-        }
-    )
-
-    print("\nFINAL ANSWER:")
-    print(result["messages"][-1].content)
+print(response["messages"][-1].content)
