@@ -26,10 +26,9 @@ measured and tuned with a real evaluation loop rather than guesswork.
 ## Architecture
 
 ```
-  Streamlit frontend  ──HTTP──>  FastAPI backend  ──>  RAG pipeline  ──>  ChromaDB
-   (app.py)                       (main.py)            (rewrite ->          (vector
-                                  POST /chat            retrieve ->          store)
-                                  Pydantic-validated    generate)
+  Streamlit frontend  ──>  FastAPI backend  ──>  LanGraph React Agent  ──>  Gemini 2.5 Flash  ──> ChromaDB
+   (app.py)                    (main.py)                                                          
+                                      
 ```
 
 The frontend and backend are separate services. The UI sends questions to the
@@ -69,19 +68,28 @@ question + history
    -> save the turn to memory
 ```
 
-## Langraph Agent
+## ReAct Agent (LangGraph)
 
-The latest version of GovPrep uses a LangGraph-based ReAct agent to orchestrate tool usage. Instead of following a fixed retrieval pipeline, the agent decides when to retrieve information from the NCERT corpus, when to perform calculations, and when it already has enough information to answer directly
+The latest version of GovPrep replaces the fixed RAG pipeline with a LangGraph-based ReAct agent.
+
+Instead of always following the same retrieval flow, the agent reasons about the user's request, decides whether it needs external information, selects the appropriate tool, observes the result, and continues reasoning until it has enough information to answer.
 
 ## Available Tools
 
 - `search_corpus()` — retrieves relevant NCERT passages with source attribution.
 - `calculate()` — evaluates simple mathematical expressions.
 
+## Reliability Features
+
+- Multi-step reasoning (Thought → Action → Observation)
+- Max-iteration safety to prevent infinite loops
+- Graceful tool-failure handling (tool errors become observations)
+- Reasoning trace visible for debugging
+
 ## Agent WorkFlow
 
 ```text
-User → Agent → Tool (if needed) → Agent → Final Answer
+User → Agent → Tool (if needed) → Observation → Agent(Reason Again) → Final Answer
 ```
 
 ## API
