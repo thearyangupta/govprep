@@ -3,6 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.prebuilt import create_react_agent
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
@@ -14,17 +15,20 @@ def search_corpus(query: str) -> str:
     retrieving information from the study material.
     """
     from retrieve_multi import retrieve
+
     try:
         chunks = retrieve(query, k=3)
+
         if not chunks:
-            return "No relevant passages found."
+            return "No relevant passages found in the GovPrep knowledge base."
 
         return "\n".join(
             f"[{c['source']} p{c['page']}] {c['text']}"
             for c in chunks
-    )
+        )
+
     except Exception as e:
-        return f"Error Occured {e} try a diff approach"
+        return f"Tool error: {e}. Try a different approach."
 
 
 @tool
@@ -35,8 +39,9 @@ def calculate(expression: str) -> str:
     """
     try:
         return str(eval(expression))
+
     except Exception as e:
-        return f"Tool error{e},try a diff approach"
+        return f"Tool error: {e}. Try a different approach."
 
 
 model = ChatGoogleGenerativeAI(
@@ -47,19 +52,22 @@ model = ChatGoogleGenerativeAI(
 
 tools = [search_corpus, calculate]
 
-agent = create_react_agent(model, tools)
+agent = create_react_agent(
+    model=model,
+    tools=tools
+)
 
 response = agent.invoke(
     {
         "messages": [
             (
                 "user",
-                "Who won the FIFA World Cup 2022?"
+                "What is (25 * 18) + 120?"
             )
         ]
     },
     config={
-        "recursion_limit": 5
+        "recursion_limit": 15
     }
 )
 
