@@ -166,7 +166,7 @@ govprep/
 
 ```bash
 # 1. clone and enter the repo
-git clone https://github.com/12PrashantKumar/govprep.git
+git clone https://github.com/thearyangupta/govprep.git
 cd govprep
 
 # 2. create + activate a virtual environment
