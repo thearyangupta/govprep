@@ -4,7 +4,7 @@
 
 # Ignore VS Code workspace settings
 /.vscode/
-
+/db/
 .env
 # Ignore data PDFs stored in subfolders
 /data/**/*.pdf
