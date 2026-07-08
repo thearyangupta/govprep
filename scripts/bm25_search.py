@@ -46,7 +46,7 @@ def bm25_search(query, k=4, collection_name="govprep_multi"):
 
     ranked_indexes = sorted(
         range(len(scores)),
-        key=lambda i: scores[i], #Whenever you look at a chunk number, check its score.
+        key=lambda i: scores[i],
         reverse=True
     )
 
