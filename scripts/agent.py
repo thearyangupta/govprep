@@ -38,10 +38,31 @@ def calculate(expression: str) -> str:
     Use this tool whenever the user asks arithmetic or numerical questions.
     """
     try:
+        allowed_chars = "0123456789+-*/(). "
+        if not all(char in allowed_chars for char in expression):
+            return "Invalid expression. Only basic math is allowed."
+
         return str(eval(expression))
 
     except Exception as e:
         return f"Tool error: {e}. Try a different approach."
+
+
+SYSTEM_PROMPT = """
+You are GovPrep's doubt-solver agent.
+
+You have two tools:
+1. search_corpus: use this for NCERT / UPSC / CDS / study-material questions.
+2. calculate: use this for arithmetic or numerical calculations.
+
+Rules:
+- Decide which tool is needed based on the user's question.
+- You may use more than one tool if the question has multiple parts.
+- If the answer is not found in the corpus, clearly say: "I don't have that in my sources."
+- Do not make up facts outside the retrieved passages.
+- When using corpus results, include the source/page references in the final answer.
+- Keep the answer clear and student-friendly.
+"""
 
 
 model = ChatGoogleGenerativeAI(
@@ -54,27 +75,32 @@ tools = [search_corpus, calculate]
 
 agent = create_react_agent(
     model=model,
-    tools=tools
+    tools=tools,
+    prompt=SYSTEM_PROMPT,
 )
 
-response = agent.invoke(
-    {
-        "messages": [
-            (
-                "user",
-                "What is (25 * 18) + 120?"
-            )
-        ]
-    },
-    config={
-        "recursion_limit": 15
-    }
-)
 
-print("=" * 60)
-print("REASONING TRACE")
-print("=" * 60)
+def answer_agentic(question: str) -> str:
+    response = agent.invoke(
+        {
+            "messages": [
+                ("user", question)
+            ]
+        },
+        config={
+            "recursion_limit": 15
+        }
+    )
 
-for message in response["messages"]:
-    print(f"\n[{message.type.upper()}]")
-    print(message.content)
+    final_message = response["messages"][-1]
+    return final_message.content
+
+
+if __name__ == "__main__":
+    question = "Explain fundamental rights and calculate 25 * 18 + 120."
+    answer = answer_agentic(question)
+
+    print("=" * 60)
+    print("FINAL ANSWER")
+    print("=" * 60)
+    print(answer)
