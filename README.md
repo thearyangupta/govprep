@@ -34,9 +34,7 @@ measured and tuned with a real evaluation loop rather than guesswork.
                        │
         ┌──────────────┴──────────────┐
         ▼                             ▼
-
    Fixed RAG (/chat)          ReAct Agent (/chat/agent)
-
         │                             │
         └──────────────┬──────────────┘
                        ▼
@@ -161,16 +159,10 @@ correct keyword and correct subject appear.
 |---------------------------------|------------|-------|
 | Baseline (fixed 500-char)       | 0.533      | 0.433 |
 | Tuned (recursive 1000/100, k=3) | 0.733      | 0.656 |
-| Hybrid (Dense + BM25 + RRF)     | 0.458      | 0.410 |
 
 The tuned vector pipeline achieved a **+37% Hit Rate / +52% MRR**
 improvement over the baseline through chunking strategy, chunk size,
 and top-k tuning.
-
-Hybrid retrieval was evaluated using the same gold set to compare
-Dense + BM25 + Reciprocal Rank Fusion against the tuned vector
-baseline. Results are reported as measured on this corpus rather than
-assuming hybrid search always performs better.
 
 Full methodology, evaluation scripts, and experiment logs are available
 in [EVALUATION.md](EVALUATION.md).
