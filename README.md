@@ -22,14 +22,29 @@ measured and tuned with a real evaluation loop rather than guesswork.
   hallucination instead of making something up
 - Runs as a **FastAPI backend** with a **Streamlit web frontend**, or from the
   command line
+- Supports both a **fixed RAG pipeline** and an **agentic ReAct mode**
+- Uses **hybrid retrieval (Dense + BM25 + Reciprocal Rank Fusion)** for improved document retrieval
 
 ## Architecture
 
-```
-  Streamlit frontend  ──>  FastAPI backend  ──>  LanGraph React Agent  ──>  Gemini 2.5 Flash  ──> ChromaDB
-   (app.py)                    (main.py)                                                          
-                                      
-```
+                Streamlit frontend
+                       │
+                       ▼
+                 FastAPI backend
+                       │
+        ┌──────────────┴──────────────┐
+        ▼                             ▼
+
+   Fixed RAG (/chat)          ReAct Agent (/chat/agent)
+
+        │                             │
+        └──────────────┬──────────────┘
+                       ▼
+       Hybrid Retrieval (Dense + BM25 + RRF)
+                       ▼
+                 Gemini 2.5 Flash
+                       ▼
+                 Source-cited Answer
 
 The frontend and backend are separate services. The UI sends questions to the
 API over HTTP and renders the response — it has no knowledge of how the answer
@@ -70,9 +85,12 @@ question + history
 
 ## ReAct Agent (LangGraph)
 
-The latest version of GovPrep replaces the fixed RAG pipeline with a LangGraph-based ReAct agent.
+GovPrep now supports two answering modes.
 
-Instead of always following the same retrieval flow, the agent reasons about the user's request, decides whether it needs external information, selects the appropriate tool, observes the result, and continues reasoning until it has enough information to answer.
+- **/chat** — the original deterministic RAG pipeline.
+- **/chat/agent** — a LangGraph-based ReAct agent.
+
+The fixed pipeline always follows the same retrieval flow, while the agent reasons about the user's request, decides which tools to use, observes the results, and continues until it has enough information to answer.
 
 ## Available Tools
 
@@ -85,6 +103,8 @@ Instead of always following the same retrieval flow, the agent reasons about the
 - Max-iteration safety to prevent infinite loops
 - Graceful tool-failure handling (tool errors become observations)
 - Reasoning trace visible for debugging
+- Prompt injection resistance through explicit agent system prompt constraints
+- Security testing against common prompt injection attacks
 
 ## Agent WorkFlow
 
@@ -107,6 +127,16 @@ Run the backend and open the auto-generated interactive docs at
 http://127.0.0.1:8000/docs . Input is validated with Pydantic — malformed
 requests return a clear `422`; errors return proper status codes (`400` for bad
 input, `503` when the model is busy).
+
+## Security
+
+GovPrep was tested against common prompt injection attacks.
+
+The fixed RAG pipeline successfully remained grounded in retrieved passages.
+
+Testing revealed an instruction-override vulnerability in the initial agent implementation. The agent system prompt was strengthened with explicit security constraints to reject prompt injection attempts, prevent system prompt disclosure, and refuse requests to bypass retrieved sources.
+
+The testing process and findings are documented in `SECURITY.md`.
 
 ## Tech stack
 
@@ -131,10 +161,19 @@ correct keyword and correct subject appear.
 |---------------------------------|------------|-------|
 | Baseline (fixed 500-char)       | 0.533      | 0.433 |
 | Tuned (recursive 1000/100, k=3) | 0.733      | 0.656 |
+| Hybrid (Dense + BM25 + RRF)     | 0.458      | 0.410 |
 
-A **+37% hit rate / +52% MRR** improvement over baseline, found by sweeping
-chunking strategy, chunk size, and top-k against the gold set. Full method,
-results, and limitations are in [EVALUATION.md](EVALUATION.md).
+The tuned vector pipeline achieved a **+37% Hit Rate / +52% MRR**
+improvement over the baseline through chunking strategy, chunk size,
+and top-k tuning.
+
+Hybrid retrieval was evaluated using the same gold set to compare
+Dense + BM25 + Reciprocal Rank Fusion against the tuned vector
+baseline. Results are reported as measured on this corpus rather than
+assuming hybrid search always performs better.
+
+Full methodology, evaluation scripts, and experiment logs are available
+in [EVALUATION.md](EVALUATION.md).
 
 ## Project structure
 
@@ -151,6 +190,10 @@ govprep/
     rewrite.py           # query rewriting for follow-ups
     generate_v1.py       # the query pipeline orchestrator
     llm.py               # centralized LLM calls with retry/backoff
+    agent.py              # LangGraph ReAct agent
+    hybrid_search.py      # Hybrid retrieval (Dense + BM25 + RRF)
+    bm25_search.py        # BM25 retrieval
+    rrf.py                # Reciprocal Rank Fusion
   eval/
     gold_set.json        # evaluation questions
     score.py             # Hit Rate@3 + MRR scorer
@@ -160,6 +203,7 @@ govprep/
     polity/  history/  geography/   # NCERT PDFs (per subject)
   EVALUATION.md          # evaluation method + results + limitations
   README.md
+  SECURITY.md           # Prompt injection testing and security notes
 ```
 
 ## Setup
@@ -209,9 +253,7 @@ python govprep_v1.py
 ## Notes
 
 - Source PDFs and the local vector store are not committed to the repo.
-- Built as a learning project to understand production-grade RAG end to end:
-  retrieval, evaluation, grounding, and serving — not just a wrapper around an
-  LLM API.
+- Built as a learning project to understand production-grade RAG end to end: retrieval, hybrid search, evaluation, agentic workflows, prompt injection defense, grounding, and deployment.
 
 ---
 
