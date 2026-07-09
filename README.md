@@ -27,6 +27,7 @@ measured and tuned with a real evaluation loop rather than guesswork.
 
 ## Architecture
 
+```text
                 Streamlit frontend
                        │
                        ▼
@@ -43,6 +44,7 @@ measured and tuned with a real evaluation loop rather than guesswork.
                  Gemini 2.5 Flash
                        ▼
                  Source-cited Answer
+```
 
 The frontend and backend are separate services. The UI sends questions to the
 API over HTTP and renders the response — it has no knowledge of how the answer
