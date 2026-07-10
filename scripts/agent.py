@@ -3,6 +3,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.prebuilt import create_react_agent
 import os
 from dotenv import load_dotenv
+# from langfuse.langchain import CallbackHandler
 
 load_dotenv()
 
@@ -89,6 +90,10 @@ agent = create_react_agent(
 
 
 def answer_agentic(question: str) -> str:
+
+    # Create the LangFuse recorder for this agent run
+   # langfuse_handler = CallbackHandler()
+
     response = agent.invoke(
         {
             "messages": [
