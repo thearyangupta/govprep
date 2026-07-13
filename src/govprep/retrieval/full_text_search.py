@@ -1,6 +1,4 @@
-import sys
-sys.path.insert(0, ".")
-from db import get_connection
+from src.govprep.database.db import get_connection
 
 
 def full_text_search(query, k=4, source=None):

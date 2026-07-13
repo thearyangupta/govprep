@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
-from search import search
+from src.govprep.retrieval.search import search
 from rewrite import rewrite_query
 
 env_path = Path(__file__).resolve().parent.parent / ".env"

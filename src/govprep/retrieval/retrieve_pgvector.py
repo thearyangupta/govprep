@@ -1,7 +1,5 @@
-import sys
-sys.path.insert(0, ".")
 from sentence_transformers import SentenceTransformer
-from db import get_connection
+from src.govprep.database.db import get_connection
 
 
 MODEL_NAME = "all-MiniLM-L6-v2"

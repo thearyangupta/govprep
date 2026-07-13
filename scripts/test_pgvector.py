@@ -3,7 +3,7 @@ sys.path.insert(0, ".")
 from sentence_transformers import SentenceTransformer
 from psycopg.types.json import Jsonb
 
-from db import get_connection
+from src.govprep.database.db import get_connection
 
 
 model = SentenceTransformer("all-MiniLM-L6-v2")

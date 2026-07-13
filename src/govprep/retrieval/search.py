@@ -1,4 +1,4 @@
-from pg_hybrid_search import hybrid_search
+from src.govprep.retrieval.pg_hybrid_search import hybrid_search
 
 
 def search(query: str, k: int = 4):

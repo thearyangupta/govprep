@@ -6,7 +6,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
-from db import get_connection
+from src.govprep.database.db import get_connection
 from legacy.chromadb.retrieve_multi import get_collection
 
 

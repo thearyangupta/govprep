@@ -1,5 +1,5 @@
-from retrieve_pgvector import retrieve
-from full_text_search import full_text_search
+from src.govprep.retrieval.retrieve_pgvector import retrieve
+from src.govprep.retrieval.full_text_search import full_text_search
 
 
 def doc_key(doc):
