@@ -1,9 +1,8 @@
-# Save as: govprep/scripts/generate_v1.py
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
-from retrieve_multi import retrieve
+from search import search
 from rewrite import rewrite_query
 
 env_path = Path(__file__).resolve().parent.parent / ".env"
@@ -28,7 +27,7 @@ def answer(question, memory, k=4):
  # 1. Rewrite using history
  standalone = rewrite_query(question, memory)
  # 2. Retrieve across all docs
- chunks = retrieve(standalone, k=k)
+ chunks = search(standalone, k=k)
  # 3. Build prompt with history + sources
  prompt = build_prompt(standalone, chunks, memory)
  # 4. Generate

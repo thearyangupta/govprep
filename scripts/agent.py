@@ -15,10 +15,10 @@ def search_corpus(query: str) -> str:
     Use this tool whenever the user asks factual questions that require
     retrieving information from the study material.
     """
-    from retrieve_multi import retrieve
+    from search import search
 
     try:
-        chunks = retrieve(query, k=3)
+        chunks = search(query, k=3)
 
         if not chunks:
             return "No relevant passages found in the GovPrep knowledge base."
