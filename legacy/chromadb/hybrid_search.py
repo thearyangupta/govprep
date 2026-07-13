@@ -1,5 +1,5 @@
-from retrieve_multi import retrieve
-from bm25_search import bm25_search
+from legacy.chromadb.retrieve_multi import retrieve
+from legacy.chromadb.bm25_search import bm25_search
 
 
 def doc_key(doc):  #create a unique identity for each document/chunk.

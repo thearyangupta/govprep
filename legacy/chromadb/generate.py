@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from google import genai
-from retrieve import retrieve
+from legacy.chromadb.retrieve import retrieve
 
 # Load API key
 load_dotenv("../../.env") # .env is in python-fundamentals/ root

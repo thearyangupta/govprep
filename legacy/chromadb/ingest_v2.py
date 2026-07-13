@@ -1,6 +1,6 @@
 import chromadb
 from chromadb.utils import embedding_functions
-from ingest_multi import load_pdf_with_pages, DOCUMENTS
+from legacy.chromadb.ingest_multi import load_pdf_with_pages, DOCUMENTS
 from chunkers import recursive_chunk
 
 

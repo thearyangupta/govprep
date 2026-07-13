@@ -1,9 +1,13 @@
 from psycopg.types.json import Jsonb
+from pathlib import Path
 import sys
-sys.path.insert(0, ".")
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from db import get_connection
-from retrieve_multi import get_collection
+from legacy.chromadb.retrieve_multi import get_collection
 
 
 BATCH_SIZE = 100

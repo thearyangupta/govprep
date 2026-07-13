@@ -8,7 +8,7 @@ MAX_STEPS = 5
 
 def search_corpus(query: str):
     """Search NCERT books for relevant passages."""
-    from retrieve_multi import retrieve
+    from legacy.chromadb.retrieve_multi import retrieve
 
     chunks = retrieve(query, k=3, collection_name="govprep_v2")
 

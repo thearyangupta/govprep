@@ -13,7 +13,7 @@ class State(TypedDict):
 
 def search_corpus(query: str) -> str:
     """Search NCERT books for relevant passages."""
-    from retrieve_multi import retrieve
+    from legacy.chromadb.retrieve_multi import retrieve
 
     chunks = retrieve(query, k=3)
 
