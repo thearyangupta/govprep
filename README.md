@@ -9,7 +9,7 @@ Built from scratch in native Python (no heavy frameworks in the core) to
 understand each part of a retrieval-augmented generation (RAG) system, then
 measured and tuned with a real evaluation loop rather than guesswork.
 
-![govprep web UI](govprep-ai-ss-2.png)
+![govprep web UI](assets/govprep-ai-ss-2.png)
 
 ## What it does
 
@@ -167,7 +167,7 @@ improvement over the baseline through chunking strategy, chunk size,
 and top-k tuning.
 
 Full methodology, evaluation scripts, and experiment logs are available
-in [EVALUATION.md](EVALUATION.md).
+in [Evaluation Report](docs/evaluation.md)
 
 ## Project structure
 
