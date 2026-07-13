@@ -3,9 +3,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 from src.govprep.retrieval.search import search
-from rewrite import rewrite_query
+from src.govprep.generation.rewrite import rewrite_query
 
-env_path = Path(__file__).resolve().parent.parent / ".env"
+env_path = Path(__file__).resolve().parents[3] / ".env"
 load_dotenv(env_path)
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 SYSTEM = """You are a UPSC/CDS exam prep assistant answering from \
@@ -40,7 +40,7 @@ def answer(question, memory, k=4):
  return {"answer": ans, "rewritten": standalone, "chunks": chunks}
 
 if __name__ == "__main__":
- from memory import ConversationMemory
+ from src.govprep.generation.memory import ConversationMemory
  mem = ConversationMemory()
  for q in ["What are fundamental rights?",  
  "How many are there?", # follow-up - needs rewrite

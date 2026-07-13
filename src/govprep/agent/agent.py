@@ -15,7 +15,7 @@ def search_corpus(query: str) -> str:
     Use this tool whenever the user asks factual questions that require
     retrieving information from the study material.
     """
-    from src.govprep.retrieval.search import search
+    from govprep.retrieval.search import search
 
     try:
         chunks = search(query, k=3)

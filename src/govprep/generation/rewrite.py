@@ -38,7 +38,7 @@ def rewrite_query(question, memory):
 
 # Test it
 if __name__ == "__main__":
- from memory import ConversationMemory
+ from src.govprep.generation.memory import ConversationMemory
 
  mem = ConversationMemory()
  mem.add("Who is the President of India?",

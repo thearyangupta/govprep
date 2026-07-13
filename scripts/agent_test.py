@@ -1,6 +1,6 @@
 from google import genai
 from google.genai import types
-from llm import client
+from src.govprep.generation.llm import client
 
 
 MAX_STEPS = 5

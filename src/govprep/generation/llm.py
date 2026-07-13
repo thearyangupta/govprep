@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import errors
 
-base = Path(__file__).resolve().parent.parent #resolve -show the full path, #parent = goes one folder up
-load_dotenv(base / ".env")
+env_path = Path(__file__).resolve().parents[3] / ".env"
+load_dotenv(env_path)
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 

@@ -1,15 +1,12 @@
-from fastapi import FastAPI, HTTPException
-import sys
-from pathlib import Path
-from pydantic import BaseModel
 from typing import List
+
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
-
-from memory import ConversationMemory
-from generate_v1 import answer
-from agent import answer_agentic
+from govprep.agent.agent import answer_agentic
+from govprep.generation.memory import ConversationMemory
+from govprep.generation.rag import answer
 
 app = FastAPI(title="govprep API")
 
