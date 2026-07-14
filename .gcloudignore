@@ -17,9 +17,7 @@ docs/
 assets/
 
 Dockerfile
-Dockerfile.frontend
 requirements.txt
-requirements-frontend.txt
 
 temp_ragas/
 venv-eval/
