@@ -46,6 +46,10 @@ class HealthResponse(BaseModel):
     database: str
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 @app.get("/health", response_model=HealthResponse)
 def health():
     try:
@@ -55,6 +59,8 @@ def health():
                 cursor.fetchone()
 
     except Exception:
+        logger.exception("Database health check failed")
+
         raise HTTPException(
             status_code=503,
             detail="Database is unreachable"
