@@ -35,3 +35,13 @@ Thumbs.db
 
 # Personal practice file
 practice.py
+database/backups/*.dump
+
+# Evaluation virtual environment
+venv-eval/
+
+# Temporary RAGAS inspection files
+temp_ragas/
+
+# Local database backups
+database/backups/*.dump

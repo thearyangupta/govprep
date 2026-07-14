@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
-from src.govprep.retrieval.search import search
-from src.govprep.generation.rewrite import rewrite_query
+from govprep.retrieval.search import search
+from govprep.generation.rewrite import rewrite_query
 
 env_path = Path(__file__).resolve().parents[3] / ".env"
 load_dotenv(env_path)
@@ -40,7 +40,7 @@ def answer(question, memory, k=4):
  return {"answer": ans, "rewritten": standalone, "chunks": chunks}
 
 if __name__ == "__main__":
- from src.govprep.generation.memory import ConversationMemory
+ from govprep.generation.memory import ConversationMemory
  mem = ConversationMemory()
  for q in ["What are fundamental rights?",  
  "How many are there?", # follow-up - needs rewrite

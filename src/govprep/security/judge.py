@@ -1,4 +1,4 @@
-from src.govprep.generation.llm import call_llm
+from govprep.generation.llm import call_llm
 
 def judge_faithfulness(question, context, answer):
     prompt = f"""You are evaluating a RAG answer.

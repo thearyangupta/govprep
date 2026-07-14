@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from src.govprep.database.db import get_connection
+from govprep.database.db import get_connection
 
 
 MODEL_NAME = "all-MiniLM-L6-v2"
