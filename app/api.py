@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from govprep.agent.agent import answer_agentic
+from govprep.database.db import get_connection
 from govprep.generation.memory import ConversationMemory
 from govprep.generation.rag import answer
 
@@ -39,6 +40,30 @@ class AgentResponse(BaseModel):
     answer: str
     mode: str
 
+
+class HealthResponse(BaseModel):
+    status: str
+    database: str
+
+
+@app.get("/health", response_model=HealthResponse)
+def health():
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                cursor.fetchone()
+
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Database is unreachable"
+        )
+
+    return HealthResponse(
+        status="ok",
+        database="reachable"
+    )
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
