@@ -1,0 +1,17 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-f"
+      - "Dockerfile.backend"
+      - "-t"
+      - "asia-south1-docker.pkg.dev/$PROJECT_ID/govprep/backend:latest"
+      - "."
+
+images:
+  - "asia-south1-docker.pkg.dev/$PROJECT_ID/govprep/backend:latest"
+
+options:
+  machineType: "E2_HIGHCPU_8"
+
+timeout: "2400s"
