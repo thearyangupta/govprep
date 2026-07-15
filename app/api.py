@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import FastAPI, HTTPException
@@ -9,7 +10,8 @@ from govprep.database.db import get_connection
 from govprep.generation.memory import ConversationMemory
 from govprep.generation.rag import answer
 
-app = FastAPI(title="govprep API")
+
+app = FastAPI(title="GovPrep API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +21,9 @@ app.add_middleware(
 )
 
 memory = ConversationMemory()
+
+# Use Uvicorn's configured logger so logs appear properly in Cloud Run.
+logger = logging.getLogger("uvicorn.error")
 
 
 class ChatRequest(BaseModel):
@@ -46,10 +51,6 @@ class HealthResponse(BaseModel):
     database: str
 
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 @app.get("/health", response_model=HealthResponse)
 def health():
     try:
@@ -63,61 +64,73 @@ def health():
 
         raise HTTPException(
             status_code=503,
-            detail="Database is unreachable"
+            detail="Database is unreachable",
         )
 
     return HealthResponse(
         status="ok",
-        database="reachable"
+        database="reachable",
     )
+
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
-
     if not req.question.strip():
         raise HTTPException(
             status_code=400,
-            detail="Question is empty"
+            detail="Question is empty",
         )
 
     try:
         result = answer(req.question, memory)
 
+    except HTTPException:
+        raise
+
     except Exception:
+        logger.exception("Unexpected chat request failure")
+
         raise HTTPException(
-            status_code=503,
-            detail="The model is busy. Please try again."
+            status_code=500,
+            detail="Something went wrong while processing your question.",
         )
 
     return ChatResponse(
         answer=result["answer"],
         rewritten=result["rewritten"],
         sources=[
-            Source(source=c["source"], page=c["page"])
-            for c in result["chunks"]
+            Source(
+                source=chunk["source"],
+                page=chunk["page"],
+            )
+            for chunk in result["chunks"]
         ],
     )
 
 
 @app.post("/chat/agent", response_model=AgentResponse)
 def chat_agent(req: ChatRequest):
-
     if not req.question.strip():
         raise HTTPException(
             status_code=400,
-            detail="Question is empty"
+            detail="Question is empty",
         )
 
     try:
         agent_answer = answer_agentic(req.question)
 
-    except Exception as e:
+    except HTTPException:
+        raise
+
+    except Exception:
+        logger.exception("Unexpected agent request failure")
+
         raise HTTPException(
-            status_code=503,
-            detail=str(e)
+            status_code=500,
+            detail="The agent could not process the request.",
         )
 
     return AgentResponse(
         answer=agent_answer,
-        mode="agentic"
+        mode="agentic",
     )
