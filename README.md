@@ -26,7 +26,7 @@ Built end to end to understand production-grade retrieval-augmented generation (
 
 ```
 Streamlit frontend  ──HTTP──>  FastAPI backend  ──>  RAG pipeline  ──>  Postgres + pgvector
-  (pg_app.py)                   (pg_api.py)          rewrite ->            (Neon, hybrid
+  (frontend.py)                   (api.py)          rewrite ->            (Neon, hybrid
                                 /chat, /chat/agent    guardrails ->         dense + BM25)
                                 Pydantic-validated    hybrid retrieve ->
                                                       generate
