@@ -33,16 +33,16 @@ Streamlit frontend  ──HTTP──>  FastAPI backend  ──>  RAG pipeline  �
 ```
 The frontend and backend are decoupled services — the UI sends questions over HTTP and renders validated JSON; the backend owns the pipeline.
 
-- **Backend:** FastAPI — `/chat` (RAG pipeline) and `/chat/agent` (agentic ReAct mode)
-- **Retrieval:** Hybrid search — dense (pgvector) + sparse (Postgres full-text / BM25) fused with **Reciprocal Rank Fusion (RRF)**
-- **Pipeline:** query rewriting (resolves follow-ups) → security guardrails → hybrid retrieval → grounded generation with source citation
-- **Agent:** LangGraph ReAct agent with tool-calling (corpus search, live web search, calculator), max-iteration limits, and **graceful fallback to the core RAG pipeline** when tool-calling fails — so the user always gets a grounded answer
-- **Security:** red-team tested against OWASP LLM01 (Prompt Injection); rigid SystemMessage isolation blocks jailbreaks and persona overrides (see `SECURITY.md`)
-- **Database:** PostgreSQL + pgvector (Neon)
-- **Embeddings:** sentence-transformers `all-mpnet-base-v2` (local, 768-dim)
-- **LLM:** Groq — Llama 3.3 70B
+- **Backend:** FastAPI — `/chat` (Hybrid RAG pipeline), `/chat/agent` (LangGraph agent), and `/health` (health monitoring)
+- **Retrieval:** Hybrid search — PostgreSQL Full-Text Search + pgvector semantic search fused using **Reciprocal Rank Fusion (RRF)**
+- **Pipeline:** conversation memory → query rewriting → hybrid retrieval → grounded generation with source citations
+- **Agent:** LangGraph ReAct agent with tool calling (corpus search and calculator) that reasons before generating the final answer
+- **Database:** PostgreSQL (Neon) with pgvector for vector search and Full-Text Search for keyword retrieval
+- **Embeddings:** Sentence Transformers (`all-MiniLM-L6-v2`) for semantic search
+- **LLM:** Google Gemini 2.5 Flash
+- **Frontend:** Streamlit web application communicating with the backend through REST APIs
+- **Deployment:** Dockerized services deployed on Google Cloud Run with Cloud Build, Artifact Registry, and Google Secret Manager
 - **Observability:** LangFuse — every agent step, tool call, token cost, and latency is traced
-- **Deployment:** Docker on GCP Cloud Run
 
 ## Evaluation
 
@@ -74,8 +74,9 @@ question + history
 
 Indexed over NCERT Class 11 textbooks — Political Science (*Indian Constitution at Work*), History (*Themes in World History*), and Geography (*Fundamentals of Physical Geography*). The ingestion pipeline loads any text-layer document placed in the subject folders, so more subjects and sources can be added over time.
 
-## Project structure
+## 📁 Project Structure
 
+```text
 govprep/
 │
 ├── app/
@@ -96,10 +97,8 @@ govprep/
 │   └── seed.py                 # Database initialization
 │
 ├── data/                       # NCERT PDFs (not committed)
-│
 ├── tests/                      # Project tests
-│
-├── docs/                       # Project documentation
+├── docs/                       # Documentation
 │
 ├── Dockerfile.backend
 ├── Dockerfile.frontend
@@ -112,7 +111,7 @@ govprep/
 │
 ├── README.md
 └── SECURITY.md
-
+```
 ## Setup
 
 ```bash
