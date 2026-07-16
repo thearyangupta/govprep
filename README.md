@@ -44,6 +44,34 @@ The frontend and backend are decoupled services — the UI sends questions over 
 - **Deployment:** Dockerized services deployed on Google Cloud Run with Cloud Build, Artifact Registry, and Google Secret Manager
 - **Observability:** LangFuse — every agent step, tool call, token cost, and latency is traced
 
+## Testing & Continuous Integration
+
+GovPrep includes automated tests to verify the backend before every change.
+
+### Test Coverage
+
+- **Smoke tests** – verify the testing infrastructure works correctly.
+- **API tests** – validate `/health` and `/chat` endpoints, including success and failure scenarios.
+- **Retrieval tests** – verify the retrieval orchestration layer delegates requests correctly.
+- **Evaluation tests** – ensure the retrieval evaluation pipeline executes successfully.
+
+### Continuous Integration
+
+GitHub Actions automatically runs the test suite on every push and pull request.
+
+Pipeline:
+```text
+Checkout Repository
+        ↓
+Set up Python 3.11
+        ↓
+Install Dependencies
+        ↓
+Run Ruff
+        ↓
+Run Pytest
+```
+
 ## Evaluation
 
 Retrieval quality was measured, not assumed — and generation quality too. Scored against a 24-question gold set (across all three subjects, each tagged with a required keyword and expected subject).
