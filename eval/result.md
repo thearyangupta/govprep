@@ -59,3 +59,14 @@ Final config: recursive chunking, 1000/100, k=3.
 |-------------------------------------------------------------|
 |Hit Rate@3      | 0.458            | 0.458          |   +0.0%|
 |MRR             | 0.410            | 0.410          |   +0.0%|
+
+
+## RAGAS Evaluation
+
+| Metric       | Score |
+|---           |---    |
+| Faithfulness | 1.000 |
+| Answer Relevancy | 0.896 |
+
+RAGAS evaluation confirms that the generated answer is grounded
+in the retrieved context and relevant to the user's question.
