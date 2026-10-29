@@ -6,10 +6,6 @@ Built end to end to understand production-grade retrieval-augmented generation (
 
 ![govprep web UI](assets/govprep-ai-ss-2.png)
 
-**🔗 Live demo:** https://govprep-frontend-64960261938.asia-south1.run.app/
-
-> ⏳ First load may take up to a minute while the server wakes from idle.
-
 **💻 Code:** https://github.com/thearyangupta/govprep
 
 ---
